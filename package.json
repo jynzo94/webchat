@@ -1,0 +1,37 @@
+{
+    "name": "webchat",
+    "version": "0.1.0",
+    "private": false,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "dev:wss": "cross-env PORT=3002 nodemon --watch src --ext .ts,.tsx,js,jsx --signal SIGTERM --exec \"ts-node --project tsconfig.server.json src/server/wsServer.ts"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "^4.36.1",
+        "@trpc/client": "^10.44.1",
+        "@trpc/next": "^10.44.1",
+        "@trpc/react-query": "^10.44.1",
+        "@trpc/server": "^10.44.1",
+        "boring-name-generator": "^1.0.3",
+        "mongodb": "^6.3.0",
+        "mongoose": "^8.0.3",
+        "next": "14.0.3",
+        "react": "^18",
+        "react-dom": "^18",
+        "ws": "^8.14.2",
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "cross-env": "^7.0.3",
+        "ts-node": "^10.9.1",
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "@types/ws": "^8.5.10",
+        "nodemon": "^3.0.2",
+        "typescript": "^5"
+    }
+}
