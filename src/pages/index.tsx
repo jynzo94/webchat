@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppRouter } from '../server/router'
 import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client'
 import styles from '../styles/index.module.css'
@@ -36,6 +36,11 @@ export default function IndexPage() {
     const [chats, setChats] = useState<ChatEntity[] | undefined>(
         chatsQuery.data
     )
+    const chatsRef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+        chatsRef.current?.scrollTo(0, 9999)
+    }, [chats])
 
     useEffect(() => {
         setUserName(
@@ -55,7 +60,6 @@ export default function IndexPage() {
     }, [])
 
     const onAdd = (data: ChatEntity) => {
-        window.scrollTo(0, document.body.scrollHeight)
         setChats((pre) => {
             if (pre) {
                 return [...pre, data]
@@ -68,14 +72,14 @@ export default function IndexPage() {
         client.add.mutate({ body: input, userName: userName })
     }
 
-    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInput(e.target.value)
     }
 
     return (
-        <div className={styles.wrapper}>
+        <div className={styles.page}>
             <h1 className={styles.header}>Welcome, {userName}!</h1>
-            <div className={styles.chats}>
+            <div className={styles.chats} ref={chatsRef}>
                 {chats &&
                     chats.map((chat, i) => {
                         return (
@@ -91,13 +95,12 @@ export default function IndexPage() {
                             </div>
                         )
                     })}
-                <div className={styles.hiddenRow} />
             </div>
-            <div className={styles.inputsWrapper}>
-                <input
-                    className={styles.input}
+            <form className={styles.form}>
+                <textarea
+                    className={styles.textarea}
                     value={input}
-                    onChange={onChangeInput}
+                    onChange={onChangeTextArea}
                 />
                 <button
                     className={styles.button}
@@ -106,7 +109,7 @@ export default function IndexPage() {
                 >
                     Send
                 </button>
-            </div>
+            </form>
         </div>
     )
 }
