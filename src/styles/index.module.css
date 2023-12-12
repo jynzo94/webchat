@@ -71,6 +71,8 @@
     margin-right: 5px;
     background-color: #444;
     color: #fff;
+    resize: none;
+    overflow-y: hidden;
 }
 
 .button {

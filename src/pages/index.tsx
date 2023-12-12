@@ -83,6 +83,7 @@ export default function IndexPage() {
 
     const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
+            e.preventDefault()
             send()
         }
     }
