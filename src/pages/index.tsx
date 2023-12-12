@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 import { AppRouter } from '../server/router'
 import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client'
 import styles from '../styles/index.module.css'
@@ -37,6 +37,7 @@ export default function IndexPage() {
         chatsQuery.data
     )
     const chatsRef = useRef<HTMLDivElement | null>(null)
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 
     useEffect(() => {
         chatsRef.current?.scrollTo(0, 9999)
@@ -59,6 +60,11 @@ export default function IndexPage() {
         }
     }, [])
 
+    const send = () => {
+        setInput('')
+        client.add.mutate({ body: input, userName: userName })
+    }
+
     const onAdd = (data: ChatEntity) => {
         setChats((pre) => {
             if (pre) {
@@ -68,12 +74,17 @@ export default function IndexPage() {
     }
 
     const onClickSend = () => {
-        setInput('')
-        client.add.mutate({ body: input, userName: userName })
+        send()
     }
 
     const onChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInput(e.target.value)
+    }
+
+    const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter') {
+            send()
+        }
     }
 
     return (
@@ -101,6 +112,8 @@ export default function IndexPage() {
                     className={styles.textarea}
                     value={input}
                     onChange={onChangeTextArea}
+                    onKeyDown={onKeyDown}
+                    ref={textAreaRef}
                 />
                 <button
                     className={styles.button}
