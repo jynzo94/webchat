@@ -1,27 +1,7 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react'
-import { AppRouter } from '../server/router'
-import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client'
 import styles from '../styles/index.module.css'
 import { trpc } from '@/utils/trpc'
 import nameGenerator from 'boring-name-generator'
-
-const wsClient = createWSClient({
-    url: `ws://localhost:3002`,
-    onOpen: () => {
-        console.log('nextjs connection open')
-    },
-    onClose: () => {
-        console.log('nextjs connection close')
-    }
-})
-
-const client = createTRPCProxyClient<AppRouter>({
-    links: [
-        wsLink({
-            client: wsClient
-        })
-    ]
-})
 
 type ChatEntity = {
     _id?: string
@@ -36,6 +16,7 @@ export default function IndexPage() {
     const [chats, setChats] = useState<ChatEntity[] | undefined>(
         chatsQuery.data
     )
+    const addMutation = trpc.add.useMutation()
     const chatsRef = useRef<HTMLDivElement | null>(null)
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -50,19 +31,11 @@ export default function IndexPage() {
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' ')
         )
-
-        client.onAdd.subscribe(undefined, {
-            onData: onAdd
-        })
-
-        return () => {
-            wsClient.close()
-        }
     }, [])
 
     const send = () => {
         setInput('')
-        client.add.mutate({ body: input, userName: userName })
+        addMutation.mutate({ body: input, userName })
     }
 
     const onAdd = (data: ChatEntity) => {
@@ -72,6 +45,10 @@ export default function IndexPage() {
             }
         })
     }
+
+    trpc.onAdd.useSubscription(undefined, {
+        onData: onAdd
+    })
 
     const onClickSend = () => {
         send()
