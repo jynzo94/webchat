@@ -11,7 +11,7 @@ const wsClient = createWSClient({
         console.log('nextjs connection open')
     },
     onClose: () => {
-        console.log('nextjs connection open')
+        console.log('nextjs connection close')
     }
 })
 
