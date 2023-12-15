@@ -1,12 +1,15 @@
 import { appRouter } from './router'
 import ws from 'ws'
-import { createContext } from 'react'
 import { applyWSSHandler } from '@trpc/server/adapters/ws'
 
 const wss = new ws.Server({
     port: 3002
 })
-const handler = applyWSSHandler({ wss, router: appRouter, createContext })
+const handler = applyWSSHandler({
+    wss,
+    router: appRouter,
+    createContext: async () => {}
+})
 
 wss.on('connection', (ws) => {
     console.log(`➕➕ Connection (${wss.clients.size})`)
